@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
+use App\Http\Resources\Auth\SuccessLoginResource;
 use Illuminate\Support\Facades\Auth;
-//use Tymon\JWTAuth\Facades\JWTAuth;
 
 class JwtService
 {
@@ -11,7 +11,6 @@ class JwtService
     public function guardApi(array $data)
     {
         $token = Auth::guard('api')->attempt($data);
-        info($token);
         return $token;
     }
 
@@ -25,24 +24,22 @@ class JwtService
         }
 
         $user = Auth::guard('api')->user();
-        return response()->json([
-            'status' => 'success',
-            'user' => $user,
-            'authorisation' => [
-                'token' => $token,
-                'type' => 'bearer',
+        return new SuccessLoginResource(
+            [
+                'status' => 'success',
+                'user' => $user,
+                'authorisation' => [
+                    'token' => $token,
+                    'type' => 'bearer',
+                ]
             ]
-        ]);
+        );
     }
 
     public function invalidateToken(): void
     {
-        // Retrieve the currently authenticated user
-        $user = Auth::guard('api')->user();
-
-        // Invalidate the token for the user
-        if ($user) {
-            //JWTAuth::invalidate(JWTAuth::getToken());
+        if (Auth::guard('api')->hasUser()) {
+            Auth::guard('api')->logout();
         }
     }
 }

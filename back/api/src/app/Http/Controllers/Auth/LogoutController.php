@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Services\JwtService;
 use Illuminate\Http\JsonResponse;
+use OpenApi\Attributes as OAT;
 
 class LogoutController extends Controller
 {
@@ -12,12 +13,24 @@ class LogoutController extends Controller
     {
     }
 
+    #[OAT\Post(
+        tags: ['auth'],
+        path: '/api/auth/logout',
+        summary: 'Logout a user',
+        operationId: 'api.auth.logout',
+        requestBody: new OAT\RequestBody(
+            required: true,
+        ),
+        responses: [
+            new OAT\Response(
+                response: 200,
+                description: 'Ok',
+            )]
+    )]
     public function __invoke(): JsonResponse
     {
-        // Attempt to invalidate the current token
         $this->jwtService->invalidateToken();
 
-        // Return a success response indicating the user has been logged out
         return response()->json([
             'status' => 'success',
             'message' => 'Logged out successfully.',

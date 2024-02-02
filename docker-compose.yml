@@ -31,7 +31,6 @@ services:
       - '3306:3306'
     networks:
       - sne
-    command: chmod -R 644 /var/lib/mysql
   db.redis.cache:
     build:
       dockerfile: ./services/redis/Dockerfile
