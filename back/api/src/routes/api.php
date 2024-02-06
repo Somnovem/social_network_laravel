@@ -23,3 +23,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('auth/register', RegisterController::class)->name('api.auth.register');
 Route::post('auth/login', LoginController::class)->name('api.auth.login');
 Route::post('auth/logout', LogoutController::class)->name('api.auth.logout');
+
+Route::group(['middleware' => ['auth:api'], 'prefix' => 'profile'],function () {
+    Route::post('/avatar',\App\Http\Controllers\Profiles\UploadUserAvatarController::class)
+        ->name('profile.avatar.upload');
+});

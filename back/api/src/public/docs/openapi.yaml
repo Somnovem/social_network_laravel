@@ -79,6 +79,19 @@ components:
                 example: 'Error message 2'
           type: object
       type: object
+    LoginRequest:
+      required:
+        - name
+        - email
+      properties:
+        email:
+          type: string
+          format: email
+          example: john@example.com
+        password:
+          type: string
+          example: '123456'
+      type: object
     RegisterRequest:
       required:
         - name
