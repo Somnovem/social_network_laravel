@@ -3,6 +3,7 @@
 namespace App\Jobs\Profiles;
 
 use App\Services\Profiles\AvatarService;
+use App\Services\Socket\SocketService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -15,7 +16,8 @@ class OptimizeAvatarJob implements ShouldQueue
 
     public function __construct(
             private int $user_id,
-            private AvatarService $avatarService)
+            private AvatarService $avatarService,
+            private SocketService $socketService,)
     {
         //$this->onConnection("avatars.jobs");
         $this->onQueue(env("REDIS_AVATARS_QUEUE", "avatars.jobs"));
@@ -24,5 +26,6 @@ class OptimizeAvatarJob implements ShouldQueue
     public function handle(): void
     {
         $this->avatarService->optimizeAvatar($this->user_id);
+        $this->socketService->emit('socket.php','Your avatar is ready!');
     }
 }

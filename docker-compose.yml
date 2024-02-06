@@ -22,8 +22,8 @@ services:
     container_name: front.public
     volumes:
       - ./front/public/src:/usr/src/app
-    #    ports:
-    #      - '3000:3000'
+    ports:
+      - '3000:3000'
     env_file:
       - ./.env
     networks:
@@ -106,6 +106,38 @@ services:
     networks:
       - sne
 
+# SocketIO
+# -----------------------------------------------------------------
+  db.redis.sockets:
+    build:
+      dockerfile: ./services/redis/Dockerfile
+      context: .
+    container_name: db.redis.sockets
+    volumes:
+      - ./volumes/db/redis/sockets:/data
+    networks:
+      - sne
+
+  socket.sunny:
+    build:
+      dockerfile: Dockerfile
+      context: ./back/sockets
+    container_name: socket.sunny
+    volumes:
+      - ./back/sockets/src:/usr/src/app
+    env_file:
+      - ./.env
+    environment:
+      - SERVER_NAME=socketSunny
+      - SERVER_PORT=3000
+    networks:
+      - sne
+    depends_on:
+      - laravel.api
+      - db.redis.sockets
+
+# -----------------------------------------------------------------
+
   # Этот сервер будет содержать кеш сайта
   db.redis.cache:
     build:
@@ -114,8 +146,6 @@ services:
     container_name: db.redis.cache
     volumes:
       - ./volumes/db/redis/cache:/data
-    ports:
-      - '6379:6379'
     networks:
       - sne
 
